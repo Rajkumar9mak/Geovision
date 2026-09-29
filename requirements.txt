@@ -1,0 +1,16 @@
+streamlit>=1.35.0
+pandas>=2.0.0
+numpy>=1.24.0
+scipy>=1.11.0
+lasio>=0.30
+psycopg2-binary>=2.9.9
+sqlalchemy>=2.0.0
+geoalchemy2>=0.14.0
+plotly>=5.18.0
+pyvista>=0.43.0
+sentence-transformers>=3.0.0
+chromadb>=0.5.0
+langchain>=0.2.0
+langchain-community>=0.2.0
+pypdf>=4.0.0
+folium>=0.15.0

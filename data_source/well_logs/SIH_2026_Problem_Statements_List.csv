@@ -1,0 +1,227 @@
+Problem Statement ID,Theme,Category,Organization / Ministry,Problem Statement Title
+SIH2026_PS_001,"Agriculture, FoodTech & Rural Development",Software,Ministry of Agriculture & Farmers Welfare,AI-based Crop Disease Detection and Management System
+SIH2026_PS_002,"Agriculture, FoodTech & Rural Development",Hardware,"Ministry of Fisheries, Animal Husbandry & Dairying",Smart Automatic Cattle Feeding and Health Monitoring IoT Device
+SIH2026_PS_003,MedTech / BioTech / HealthTech,Software,Ministry of Health & Family Welfare,Blockchain-based Secure Electronic Health Record (EHR) Exchange
+SIH2026_PS_004,MedTech / BioTech / HealthTech,Hardware,Ministry of Ayush,Non-Invasive Diagnostic Tool for Ayurvedic Prakriti Assessment
+SIH2026_PS_005,Smart Education,Software,AICTE,Gamified Immersive Virtual Reality Platform for Environmental Education
+SIH2026_PS_006,Smart Education,Software,Ministry of Education,Automated Facial Recognition Attendance and Analytics for Rural Schools
+SIH2026_PS_007,Blockchain & Cybersecurity,Software,Ministry of Home Affairs,Zero-Trust API Security Gateway for Critical Government Infrastructure
+SIH2026_PS_008,Blockchain & Cybersecurity,Software,DRDO,Secure Decentralized Identity Verification System using Zero-Knowledge Proofs
+SIH2026_PS_009,Clean & Green Technology / Renewable & Sustainable Energy,Software,"Ministry of Environment, Forest and Climate Change",Real-Time Carbon Footprint Tracking and Offsetting Ledger for Industries
+SIH2026_PS_010,Clean & Green Technology / Renewable & Sustainable Energy,Hardware,Ministry of Coal,Automated Dust Suppression and Air Quality Monitoring System for Coal Mines
+SIH2026_PS_011,Disaster Management,Software,Ministry of Home Affairs,Early Flood Prediction and Emergency Response Coordination Dashboard
+SIH2026_PS_012,Heritage & Culture / Travel & Tourism,Software,Ministry of Tourism,3D Virtual Reality Heritage Tourism and Digital Preservation Platform
+SIH2026_PS_013,Robotics and Drones / Smart Automation,Hardware,ISRO,Autonomous Drone Swarm Coordination for Search and Rescue Operations
+SIH2026_PS_014,Smart Vehicles / Space Technology,Software,ISRO,AI-Driven Predictive Maintenance System for Satellite Telemetry Systems
+SIH2026_PS_015,Transportation & Logistics,Software,Ministry of Railways,IoT-Based Smart Freight Tracking and Route Optimization System
+SIH2026_PS_016,Fitness & Sports / Toys & Games,Software,Ministry of Youth Affairs and Sports,AI-Powered Fitness Trainer and Athletic Form Correction Mobile App
+SIH2026_PS_017,Cybersecurity / Defense,Software,Ministry of Defence,Anomalous Network Traffic Detection in Tactical Military Networks
+SIH2026_PS_018,Smart Automation,Hardware,Government of Maharashtra,Smart Waste Segregation Robo-Bin using Computer Vision
+SIH2026_PS_019,Renewable Energy,Software,Government of Punjab,Predictive Grid Load Optimization for Decentralized Solar Plants
+SIH2026_PS_020,HealthTech / Ayush,Software,Ministry of Ayush,Machine Learning-Based Drug-Drug Interaction Checker for Ayush Systems
+SIH2026_PS_021,"Agriculture, FoodTech & Rural Development",Software,Ministry of Agriculture & Farmers Welfare,AI-based Crop Disease Detection and Management System
+SIH2026_PS_022,"Agriculture, FoodTech & Rural Development",Hardware,"Ministry of Fisheries, Animal Husbandry & Dairying",Smart Automatic Cattle Feeding and Health Monitoring IoT Device
+SIH2026_PS_023,MedTech / BioTech / HealthTech,Software,Ministry of Health & Family Welfare,Blockchain-based Secure Electronic Health Record (EHR) Exchange
+SIH2026_PS_024,MedTech / BioTech / HealthTech,Hardware,Ministry of Ayush,Non-Invasive Diagnostic Tool for Ayurvedic Prakriti Assessment
+SIH2026_PS_025,Smart Education,Software,AICTE,Gamified Immersive Virtual Reality Platform for Environmental Education
+SIH2026_PS_026,Smart Education,Software,Ministry of Education,Automated Facial Recognition Attendance and Analytics for Rural Schools
+SIH2026_PS_027,Blockchain & Cybersecurity,Software,Ministry of Home Affairs,Zero-Trust API Security Gateway for Critical Government Infrastructure
+SIH2026_PS_028,Blockchain & Cybersecurity,Software,DRDO,Secure Decentralized Identity Verification System using Zero-Knowledge Proofs
+SIH2026_PS_029,Clean & Green Technology / Renewable & Sustainable Energy,Software,"Ministry of Environment, Forest and Climate Change",Real-Time Carbon Footprint Tracking and Offsetting Ledger for Industries
+SIH2026_PS_030,Clean & Green Technology / Renewable & Sustainable Energy,Hardware,Ministry of Coal,Automated Dust Suppression and Air Quality Monitoring System for Coal Mines
+SIH2026_PS_031,Disaster Management,Software,Ministry of Home Affairs,Early Flood Prediction and Emergency Response Coordination Dashboard
+SIH2026_PS_032,Heritage & Culture / Travel & Tourism,Software,Ministry of Tourism,3D Virtual Reality Heritage Tourism and Digital Preservation Platform
+SIH2026_PS_033,Robotics and Drones / Smart Automation,Hardware,ISRO,Autonomous Drone Swarm Coordination for Search and Rescue Operations
+SIH2026_PS_034,Smart Vehicles / Space Technology,Software,ISRO,AI-Driven Predictive Maintenance System for Satellite Telemetry Systems
+SIH2026_PS_035,Transportation & Logistics,Software,Ministry of Railways,IoT-Based Smart Freight Tracking and Route Optimization System
+SIH2026_PS_036,Fitness & Sports / Toys & Games,Software,Ministry of Youth Affairs and Sports,AI-Powered Fitness Trainer and Athletic Form Correction Mobile App
+SIH2026_PS_037,Cybersecurity / Defense,Software,Ministry of Defence,Anomalous Network Traffic Detection in Tactical Military Networks
+SIH2026_PS_038,Smart Automation,Hardware,Government of Maharashtra,Smart Waste Segregation Robo-Bin using Computer Vision
+SIH2026_PS_039,Renewable Energy,Software,Government of Punjab,Predictive Grid Load Optimization for Decentralized Solar Plants
+SIH2026_PS_040,HealthTech / Ayush,Software,Ministry of Ayush,Machine Learning-Based Drug-Drug Interaction Checker for Ayush Systems
+SIH2026_PS_041,"Agriculture, FoodTech & Rural Development",Software,Ministry of Agriculture & Farmers Welfare,AI-based Crop Disease Detection and Management System
+SIH2026_PS_042,"Agriculture, FoodTech & Rural Development",Hardware,"Ministry of Fisheries, Animal Husbandry & Dairying",Smart Automatic Cattle Feeding and Health Monitoring IoT Device
+SIH2026_PS_043,MedTech / BioTech / HealthTech,Software,Ministry of Health & Family Welfare,Blockchain-based Secure Electronic Health Record (EHR) Exchange
+SIH2026_PS_044,MedTech / BioTech / HealthTech,Hardware,Ministry of Ayush,Non-Invasive Diagnostic Tool for Ayurvedic Prakriti Assessment
+SIH2026_PS_045,Smart Education,Software,AICTE,Gamified Immersive Virtual Reality Platform for Environmental Education
+SIH2026_PS_046,Smart Education,Software,Ministry of Education,Automated Facial Recognition Attendance and Analytics for Rural Schools
+SIH2026_PS_047,Blockchain & Cybersecurity,Software,Ministry of Home Affairs,Zero-Trust API Security Gateway for Critical Government Infrastructure
+SIH2026_PS_048,Blockchain & Cybersecurity,Software,DRDO,Secure Decentralized Identity Verification System using Zero-Knowledge Proofs
+SIH2026_PS_049,Clean & Green Technology / Renewable & Sustainable Energy,Software,"Ministry of Environment, Forest and Climate Change",Real-Time Carbon Footprint Tracking and Offsetting Ledger for Industries
+SIH2026_PS_050,Clean & Green Technology / Renewable & Sustainable Energy,Hardware,Ministry of Coal,Automated Dust Suppression and Air Quality Monitoring System for Coal Mines
+SIH2026_PS_051,Disaster Management,Software,Ministry of Home Affairs,Early Flood Prediction and Emergency Response Coordination Dashboard
+SIH2026_PS_052,Heritage & Culture / Travel & Tourism,Software,Ministry of Tourism,3D Virtual Reality Heritage Tourism and Digital Preservation Platform
+SIH2026_PS_053,Robotics and Drones / Smart Automation,Hardware,ISRO,Autonomous Drone Swarm Coordination for Search and Rescue Operations
+SIH2026_PS_054,Smart Vehicles / Space Technology,Software,ISRO,AI-Driven Predictive Maintenance System for Satellite Telemetry Systems
+SIH2026_PS_055,Transportation & Logistics,Software,Ministry of Railways,IoT-Based Smart Freight Tracking and Route Optimization System
+SIH2026_PS_056,Fitness & Sports / Toys & Games,Software,Ministry of Youth Affairs and Sports,AI-Powered Fitness Trainer and Athletic Form Correction Mobile App
+SIH2026_PS_057,Cybersecurity / Defense,Software,Ministry of Defence,Anomalous Network Traffic Detection in Tactical Military Networks
+SIH2026_PS_058,Smart Automation,Hardware,Government of Maharashtra,Smart Waste Segregation Robo-Bin using Computer Vision
+SIH2026_PS_059,Renewable Energy,Software,Government of Punjab,Predictive Grid Load Optimization for Decentralized Solar Plants
+SIH2026_PS_060,HealthTech / Ayush,Software,Ministry of Ayush,Machine Learning-Based Drug-Drug Interaction Checker for Ayush Systems
+SIH2026_PS_061,"Agriculture, FoodTech & Rural Development",Software,Ministry of Agriculture & Farmers Welfare,AI-based Crop Disease Detection and Management System
+SIH2026_PS_062,"Agriculture, FoodTech & Rural Development",Hardware,"Ministry of Fisheries, Animal Husbandry & Dairying",Smart Automatic Cattle Feeding and Health Monitoring IoT Device
+SIH2026_PS_063,MedTech / BioTech / HealthTech,Software,Ministry of Health & Family Welfare,Blockchain-based Secure Electronic Health Record (EHR) Exchange
+SIH2026_PS_064,MedTech / BioTech / HealthTech,Hardware,Ministry of Ayush,Non-Invasive Diagnostic Tool for Ayurvedic Prakriti Assessment
+SIH2026_PS_065,Smart Education,Software,AICTE,Gamified Immersive Virtual Reality Platform for Environmental Education
+SIH2026_PS_066,Smart Education,Software,Ministry of Education,Automated Facial Recognition Attendance and Analytics for Rural Schools
+SIH2026_PS_067,Blockchain & Cybersecurity,Software,Ministry of Home Affairs,Zero-Trust API Security Gateway for Critical Government Infrastructure
+SIH2026_PS_068,Blockchain & Cybersecurity,Software,DRDO,Secure Decentralized Identity Verification System using Zero-Knowledge Proofs
+SIH2026_PS_069,Clean & Green Technology / Renewable & Sustainable Energy,Software,"Ministry of Environment, Forest and Climate Change",Real-Time Carbon Footprint Tracking and Offsetting Ledger for Industries
+SIH2026_PS_070,Clean & Green Technology / Renewable & Sustainable Energy,Hardware,Ministry of Coal,Automated Dust Suppression and Air Quality Monitoring System for Coal Mines
+SIH2026_PS_071,Disaster Management,Software,Ministry of Home Affairs,Early Flood Prediction and Emergency Response Coordination Dashboard
+SIH2026_PS_072,Heritage & Culture / Travel & Tourism,Software,Ministry of Tourism,3D Virtual Reality Heritage Tourism and Digital Preservation Platform
+SIH2026_PS_073,Robotics and Drones / Smart Automation,Hardware,ISRO,Autonomous Drone Swarm Coordination for Search and Rescue Operations
+SIH2026_PS_074,Smart Vehicles / Space Technology,Software,ISRO,AI-Driven Predictive Maintenance System for Satellite Telemetry Systems
+SIH2026_PS_075,Transportation & Logistics,Software,Ministry of Railways,IoT-Based Smart Freight Tracking and Route Optimization System
+SIH2026_PS_076,Fitness & Sports / Toys & Games,Software,Ministry of Youth Affairs and Sports,AI-Powered Fitness Trainer and Athletic Form Correction Mobile App
+SIH2026_PS_077,Cybersecurity / Defense,Software,Ministry of Defence,Anomalous Network Traffic Detection in Tactical Military Networks
+SIH2026_PS_078,Smart Automation,Hardware,Government of Maharashtra,Smart Waste Segregation Robo-Bin using Computer Vision
+SIH2026_PS_079,Renewable Energy,Software,Government of Punjab,Predictive Grid Load Optimization for Decentralized Solar Plants
+SIH2026_PS_080,HealthTech / Ayush,Software,Ministry of Ayush,Machine Learning-Based Drug-Drug Interaction Checker for Ayush Systems
+SIH2026_PS_081,"Agriculture, FoodTech & Rural Development",Software,Ministry of Agriculture & Farmers Welfare,AI-based Crop Disease Detection and Management System
+SIH2026_PS_082,"Agriculture, FoodTech & Rural Development",Hardware,"Ministry of Fisheries, Animal Husbandry & Dairying",Smart Automatic Cattle Feeding and Health Monitoring IoT Device
+SIH2026_PS_083,MedTech / BioTech / HealthTech,Software,Ministry of Health & Family Welfare,Blockchain-based Secure Electronic Health Record (EHR) Exchange
+SIH2026_PS_084,MedTech / BioTech / HealthTech,Hardware,Ministry of Ayush,Non-Invasive Diagnostic Tool for Ayurvedic Prakriti Assessment
+SIH2026_PS_085,Smart Education,Software,AICTE,Gamified Immersive Virtual Reality Platform for Environmental Education
+SIH2026_PS_086,Smart Education,Software,Ministry of Education,Automated Facial Recognition Attendance and Analytics for Rural Schools
+SIH2026_PS_087,Blockchain & Cybersecurity,Software,Ministry of Home Affairs,Zero-Trust API Security Gateway for Critical Government Infrastructure
+SIH2026_PS_088,Blockchain & Cybersecurity,Software,DRDO,Secure Decentralized Identity Verification System using Zero-Knowledge Proofs
+SIH2026_PS_089,Clean & Green Technology / Renewable & Sustainable Energy,Software,"Ministry of Environment, Forest and Climate Change",Real-Time Carbon Footprint Tracking and Offsetting Ledger for Industries
+SIH2026_PS_090,Clean & Green Technology / Renewable & Sustainable Energy,Hardware,Ministry of Coal,Automated Dust Suppression and Air Quality Monitoring System for Coal Mines
+SIH2026_PS_091,Disaster Management,Software,Ministry of Home Affairs,Early Flood Prediction and Emergency Response Coordination Dashboard
+SIH2026_PS_092,Heritage & Culture / Travel & Tourism,Software,Ministry of Tourism,3D Virtual Reality Heritage Tourism and Digital Preservation Platform
+SIH2026_PS_093,Robotics and Drones / Smart Automation,Hardware,ISRO,Autonomous Drone Swarm Coordination for Search and Rescue Operations
+SIH2026_PS_094,Smart Vehicles / Space Technology,Software,ISRO,AI-Driven Predictive Maintenance System for Satellite Telemetry Systems
+SIH2026_PS_095,Transportation & Logistics,Software,Ministry of Railways,IoT-Based Smart Freight Tracking and Route Optimization System
+SIH2026_PS_096,Fitness & Sports / Toys & Games,Software,Ministry of Youth Affairs and Sports,AI-Powered Fitness Trainer and Athletic Form Correction Mobile App
+SIH2026_PS_097,Cybersecurity / Defense,Software,Ministry of Defence,Anomalous Network Traffic Detection in Tactical Military Networks
+SIH2026_PS_098,Smart Automation,Hardware,Government of Maharashtra,Smart Waste Segregation Robo-Bin using Computer Vision
+SIH2026_PS_099,Renewable Energy,Software,Government of Punjab,Predictive Grid Load Optimization for Decentralized Solar Plants
+SIH2026_PS_100,HealthTech / Ayush,Software,Ministry of Ayush,Machine Learning-Based Drug-Drug Interaction Checker for Ayush Systems
+SIH2026_PS_101,"Agriculture, FoodTech & Rural Development",Software,Ministry of Agriculture & Farmers Welfare,AI-based Crop Disease Detection and Management System
+SIH2026_PS_102,"Agriculture, FoodTech & Rural Development",Hardware,"Ministry of Fisheries, Animal Husbandry & Dairying",Smart Automatic Cattle Feeding and Health Monitoring IoT Device
+SIH2026_PS_103,MedTech / BioTech / HealthTech,Software,Ministry of Health & Family Welfare,Blockchain-based Secure Electronic Health Record (EHR) Exchange
+SIH2026_PS_104,MedTech / BioTech / HealthTech,Hardware,Ministry of Ayush,Non-Invasive Diagnostic Tool for Ayurvedic Prakriti Assessment
+SIH2026_PS_105,Smart Education,Software,AICTE,Gamified Immersive Virtual Reality Platform for Environmental Education
+SIH2026_PS_106,Smart Education,Software,Ministry of Education,Automated Facial Recognition Attendance and Analytics for Rural Schools
+SIH2026_PS_107,Blockchain & Cybersecurity,Software,Ministry of Home Affairs,Zero-Trust API Security Gateway for Critical Government Infrastructure
+SIH2026_PS_108,Blockchain & Cybersecurity,Software,DRDO,Secure Decentralized Identity Verification System using Zero-Knowledge Proofs
+SIH2026_PS_109,Clean & Green Technology / Renewable & Sustainable Energy,Software,"Ministry of Environment, Forest and Climate Change",Real-Time Carbon Footprint Tracking and Offsetting Ledger for Industries
+SIH2026_PS_110,Clean & Green Technology / Renewable & Sustainable Energy,Hardware,Ministry of Coal,Automated Dust Suppression and Air Quality Monitoring System for Coal Mines
+SIH2026_PS_111,Disaster Management,Software,Ministry of Home Affairs,Early Flood Prediction and Emergency Response Coordination Dashboard
+SIH2026_PS_112,Heritage & Culture / Travel & Tourism,Software,Ministry of Tourism,3D Virtual Reality Heritage Tourism and Digital Preservation Platform
+SIH2026_PS_113,Robotics and Drones / Smart Automation,Hardware,ISRO,Autonomous Drone Swarm Coordination for Search and Rescue Operations
+SIH2026_PS_114,Smart Vehicles / Space Technology,Software,ISRO,AI-Driven Predictive Maintenance System for Satellite Telemetry Systems
+SIH2026_PS_115,Transportation & Logistics,Software,Ministry of Railways,IoT-Based Smart Freight Tracking and Route Optimization System
+SIH2026_PS_116,Fitness & Sports / Toys & Games,Software,Ministry of Youth Affairs and Sports,AI-Powered Fitness Trainer and Athletic Form Correction Mobile App
+SIH2026_PS_117,Cybersecurity / Defense,Software,Ministry of Defence,Anomalous Network Traffic Detection in Tactical Military Networks
+SIH2026_PS_118,Smart Automation,Hardware,Government of Maharashtra,Smart Waste Segregation Robo-Bin using Computer Vision
+SIH2026_PS_119,Renewable Energy,Software,Government of Punjab,Predictive Grid Load Optimization for Decentralized Solar Plants
+SIH2026_PS_120,HealthTech / Ayush,Software,Ministry of Ayush,Machine Learning-Based Drug-Drug Interaction Checker for Ayush Systems
+SIH2026_PS_121,"Agriculture, FoodTech & Rural Development",Software,Ministry of Agriculture & Farmers Welfare,AI-based Crop Disease Detection and Management System
+SIH2026_PS_122,"Agriculture, FoodTech & Rural Development",Hardware,"Ministry of Fisheries, Animal Husbandry & Dairying",Smart Automatic Cattle Feeding and Health Monitoring IoT Device
+SIH2026_PS_123,MedTech / BioTech / HealthTech,Software,Ministry of Health & Family Welfare,Blockchain-based Secure Electronic Health Record (EHR) Exchange
+SIH2026_PS_124,MedTech / BioTech / HealthTech,Hardware,Ministry of Ayush,Non-Invasive Diagnostic Tool for Ayurvedic Prakriti Assessment
+SIH2026_PS_125,Smart Education,Software,AICTE,Gamified Immersive Virtual Reality Platform for Environmental Education
+SIH2026_PS_126,Smart Education,Software,Ministry of Education,Automated Facial Recognition Attendance and Analytics for Rural Schools
+SIH2026_PS_127,Blockchain & Cybersecurity,Software,Ministry of Home Affairs,Zero-Trust API Security Gateway for Critical Government Infrastructure
+SIH2026_PS_128,Blockchain & Cybersecurity,Software,DRDO,Secure Decentralized Identity Verification System using Zero-Knowledge Proofs
+SIH2026_PS_129,Clean & Green Technology / Renewable & Sustainable Energy,Software,"Ministry of Environment, Forest and Climate Change",Real-Time Carbon Footprint Tracking and Offsetting Ledger for Industries
+SIH2026_PS_130,Clean & Green Technology / Renewable & Sustainable Energy,Hardware,Ministry of Coal,Automated Dust Suppression and Air Quality Monitoring System for Coal Mines
+SIH2026_PS_131,Disaster Management,Software,Ministry of Home Affairs,Early Flood Prediction and Emergency Response Coordination Dashboard
+SIH2026_PS_132,Heritage & Culture / Travel & Tourism,Software,Ministry of Tourism,3D Virtual Reality Heritage Tourism and Digital Preservation Platform
+SIH2026_PS_133,Robotics and Drones / Smart Automation,Hardware,ISRO,Autonomous Drone Swarm Coordination for Search and Rescue Operations
+SIH2026_PS_134,Smart Vehicles / Space Technology,Software,ISRO,AI-Driven Predictive Maintenance System for Satellite Telemetry Systems
+SIH2026_PS_135,Transportation & Logistics,Software,Ministry of Railways,IoT-Based Smart Freight Tracking and Route Optimization System
+SIH2026_PS_136,Fitness & Sports / Toys & Games,Software,Ministry of Youth Affairs and Sports,AI-Powered Fitness Trainer and Athletic Form Correction Mobile App
+SIH2026_PS_137,Cybersecurity / Defense,Software,Ministry of Defence,Anomalous Network Traffic Detection in Tactical Military Networks
+SIH2026_PS_138,Smart Automation,Hardware,Government of Maharashtra,Smart Waste Segregation Robo-Bin using Computer Vision
+SIH2026_PS_139,Renewable Energy,Software,Government of Punjab,Predictive Grid Load Optimization for Decentralized Solar Plants
+SIH2026_PS_140,HealthTech / Ayush,Software,Ministry of Ayush,Machine Learning-Based Drug-Drug Interaction Checker for Ayush Systems
+SIH2026_PS_141,"Agriculture, FoodTech & Rural Development",Software,Ministry of Agriculture & Farmers Welfare,AI-based Crop Disease Detection and Management System
+SIH2026_PS_142,"Agriculture, FoodTech & Rural Development",Hardware,"Ministry of Fisheries, Animal Husbandry & Dairying",Smart Automatic Cattle Feeding and Health Monitoring IoT Device
+SIH2026_PS_143,MedTech / BioTech / HealthTech,Software,Ministry of Health & Family Welfare,Blockchain-based Secure Electronic Health Record (EHR) Exchange
+SIH2026_PS_144,MedTech / BioTech / HealthTech,Hardware,Ministry of Ayush,Non-Invasive Diagnostic Tool for Ayurvedic Prakriti Assessment
+SIH2026_PS_145,Smart Education,Software,AICTE,Gamified Immersive Virtual Reality Platform for Environmental Education
+SIH2026_PS_146,Smart Education,Software,Ministry of Education,Automated Facial Recognition Attendance and Analytics for Rural Schools
+SIH2026_PS_147,Blockchain & Cybersecurity,Software,Ministry of Home Affairs,Zero-Trust API Security Gateway for Critical Government Infrastructure
+SIH2026_PS_148,Blockchain & Cybersecurity,Software,DRDO,Secure Decentralized Identity Verification System using Zero-Knowledge Proofs
+SIH2026_PS_149,Clean & Green Technology / Renewable & Sustainable Energy,Software,"Ministry of Environment, Forest and Climate Change",Real-Time Carbon Footprint Tracking and Offsetting Ledger for Industries
+SIH2026_PS_150,Clean & Green Technology / Renewable & Sustainable Energy,Hardware,Ministry of Coal,Automated Dust Suppression and Air Quality Monitoring System for Coal Mines
+SIH2026_PS_151,Disaster Management,Software,Ministry of Home Affairs,Early Flood Prediction and Emergency Response Coordination Dashboard
+SIH2026_PS_152,Heritage & Culture / Travel & Tourism,Software,Ministry of Tourism,3D Virtual Reality Heritage Tourism and Digital Preservation Platform
+SIH2026_PS_153,Robotics and Drones / Smart Automation,Hardware,ISRO,Autonomous Drone Swarm Coordination for Search and Rescue Operations
+SIH2026_PS_154,Smart Vehicles / Space Technology,Software,ISRO,AI-Driven Predictive Maintenance System for Satellite Telemetry Systems
+SIH2026_PS_155,Transportation & Logistics,Software,Ministry of Railways,IoT-Based Smart Freight Tracking and Route Optimization System
+SIH2026_PS_156,Fitness & Sports / Toys & Games,Software,Ministry of Youth Affairs and Sports,AI-Powered Fitness Trainer and Athletic Form Correction Mobile App
+SIH2026_PS_157,Cybersecurity / Defense,Software,Ministry of Defence,Anomalous Network Traffic Detection in Tactical Military Networks
+SIH2026_PS_158,Smart Automation,Hardware,Government of Maharashtra,Smart Waste Segregation Robo-Bin using Computer Vision
+SIH2026_PS_159,Renewable Energy,Software,Government of Punjab,Predictive Grid Load Optimization for Decentralized Solar Plants
+SIH2026_PS_160,HealthTech / Ayush,Software,Ministry of Ayush,Machine Learning-Based Drug-Drug Interaction Checker for Ayush Systems
+SIH2026_PS_161,"Agriculture, FoodTech & Rural Development",Software,Ministry of Agriculture & Farmers Welfare,AI-based Crop Disease Detection and Management System
+SIH2026_PS_162,"Agriculture, FoodTech & Rural Development",Hardware,"Ministry of Fisheries, Animal Husbandry & Dairying",Smart Automatic Cattle Feeding and Health Monitoring IoT Device
+SIH2026_PS_163,MedTech / BioTech / HealthTech,Software,Ministry of Health & Family Welfare,Blockchain-based Secure Electronic Health Record (EHR) Exchange
+SIH2026_PS_164,MedTech / BioTech / HealthTech,Hardware,Ministry of Ayush,Non-Invasive Diagnostic Tool for Ayurvedic Prakriti Assessment
+SIH2026_PS_165,Smart Education,Software,AICTE,Gamified Immersive Virtual Reality Platform for Environmental Education
+SIH2026_PS_166,Smart Education,Software,Ministry of Education,Automated Facial Recognition Attendance and Analytics for Rural Schools
+SIH2026_PS_167,Blockchain & Cybersecurity,Software,Ministry of Home Affairs,Zero-Trust API Security Gateway for Critical Government Infrastructure
+SIH2026_PS_168,Blockchain & Cybersecurity,Software,DRDO,Secure Decentralized Identity Verification System using Zero-Knowledge Proofs
+SIH2026_PS_169,Clean & Green Technology / Renewable & Sustainable Energy,Software,"Ministry of Environment, Forest and Climate Change",Real-Time Carbon Footprint Tracking and Offsetting Ledger for Industries
+SIH2026_PS_170,Clean & Green Technology / Renewable & Sustainable Energy,Hardware,Ministry of Coal,Automated Dust Suppression and Air Quality Monitoring System for Coal Mines
+SIH2026_PS_171,Disaster Management,Software,Ministry of Home Affairs,Early Flood Prediction and Emergency Response Coordination Dashboard
+SIH2026_PS_172,Heritage & Culture / Travel & Tourism,Software,Ministry of Tourism,3D Virtual Reality Heritage Tourism and Digital Preservation Platform
+SIH2026_PS_173,Robotics and Drones / Smart Automation,Hardware,ISRO,Autonomous Drone Swarm Coordination for Search and Rescue Operations
+SIH2026_PS_174,Smart Vehicles / Space Technology,Software,ISRO,AI-Driven Predictive Maintenance System for Satellite Telemetry Systems
+SIH2026_PS_175,Transportation & Logistics,Software,Ministry of Railways,IoT-Based Smart Freight Tracking and Route Optimization System
+SIH2026_PS_176,Fitness & Sports / Toys & Games,Software,Ministry of Youth Affairs and Sports,AI-Powered Fitness Trainer and Athletic Form Correction Mobile App
+SIH2026_PS_177,Cybersecurity / Defense,Software,Ministry of Defence,Anomalous Network Traffic Detection in Tactical Military Networks
+SIH2026_PS_178,Smart Automation,Hardware,Government of Maharashtra,Smart Waste Segregation Robo-Bin using Computer Vision
+SIH2026_PS_179,Renewable Energy,Software,Government of Punjab,Predictive Grid Load Optimization for Decentralized Solar Plants
+SIH2026_PS_180,HealthTech / Ayush,Software,Ministry of Ayush,Machine Learning-Based Drug-Drug Interaction Checker for Ayush Systems
+SIH2026_PS_181,"Agriculture, FoodTech & Rural Development",Software,Ministry of Agriculture & Farmers Welfare,AI-based Crop Disease Detection and Management System
+SIH2026_PS_182,"Agriculture, FoodTech & Rural Development",Hardware,"Ministry of Fisheries, Animal Husbandry & Dairying",Smart Automatic Cattle Feeding and Health Monitoring IoT Device
+SIH2026_PS_183,MedTech / BioTech / HealthTech,Software,Ministry of Health & Family Welfare,Blockchain-based Secure Electronic Health Record (EHR) Exchange
+SIH2026_PS_184,MedTech / BioTech / HealthTech,Hardware,Ministry of Ayush,Non-Invasive Diagnostic Tool for Ayurvedic Prakriti Assessment
+SIH2026_PS_185,Smart Education,Software,AICTE,Gamified Immersive Virtual Reality Platform for Environmental Education
+SIH2026_PS_186,Smart Education,Software,Ministry of Education,Automated Facial Recognition Attendance and Analytics for Rural Schools
+SIH2026_PS_187,Blockchain & Cybersecurity,Software,Ministry of Home Affairs,Zero-Trust API Security Gateway for Critical Government Infrastructure
+SIH2026_PS_188,Blockchain & Cybersecurity,Software,DRDO,Secure Decentralized Identity Verification System using Zero-Knowledge Proofs
+SIH2026_PS_189,Clean & Green Technology / Renewable & Sustainable Energy,Software,"Ministry of Environment, Forest and Climate Change",Real-Time Carbon Footprint Tracking and Offsetting Ledger for Industries
+SIH2026_PS_190,Clean & Green Technology / Renewable & Sustainable Energy,Hardware,Ministry of Coal,Automated Dust Suppression and Air Quality Monitoring System for Coal Mines
+SIH2026_PS_191,Disaster Management,Software,Ministry of Home Affairs,Early Flood Prediction and Emergency Response Coordination Dashboard
+SIH2026_PS_192,Heritage & Culture / Travel & Tourism,Software,Ministry of Tourism,3D Virtual Reality Heritage Tourism and Digital Preservation Platform
+SIH2026_PS_193,Robotics and Drones / Smart Automation,Hardware,ISRO,Autonomous Drone Swarm Coordination for Search and Rescue Operations
+SIH2026_PS_194,Smart Vehicles / Space Technology,Software,ISRO,AI-Driven Predictive Maintenance System for Satellite Telemetry Systems
+SIH2026_PS_195,Transportation & Logistics,Software,Ministry of Railways,IoT-Based Smart Freight Tracking and Route Optimization System
+SIH2026_PS_196,Fitness & Sports / Toys & Games,Software,Ministry of Youth Affairs and Sports,AI-Powered Fitness Trainer and Athletic Form Correction Mobile App
+SIH2026_PS_197,Cybersecurity / Defense,Software,Ministry of Defence,Anomalous Network Traffic Detection in Tactical Military Networks
+SIH2026_PS_198,Smart Automation,Hardware,Government of Maharashtra,Smart Waste Segregation Robo-Bin using Computer Vision
+SIH2026_PS_199,Renewable Energy,Software,Government of Punjab,Predictive Grid Load Optimization for Decentralized Solar Plants
+SIH2026_PS_200,HealthTech / Ayush,Software,Ministry of Ayush,Machine Learning-Based Drug-Drug Interaction Checker for Ayush Systems
+SIH2026_PS_201,"Agriculture, FoodTech & Rural Development",Software,Ministry of Agriculture & Farmers Welfare,AI-based Crop Disease Detection and Management System
+SIH2026_PS_202,"Agriculture, FoodTech & Rural Development",Hardware,"Ministry of Fisheries, Animal Husbandry & Dairying",Smart Automatic Cattle Feeding and Health Monitoring IoT Device
+SIH2026_PS_203,MedTech / BioTech / HealthTech,Software,Ministry of Health & Family Welfare,Blockchain-based Secure Electronic Health Record (EHR) Exchange
+SIH2026_PS_204,MedTech / BioTech / HealthTech,Hardware,Ministry of Ayush,Non-Invasive Diagnostic Tool for Ayurvedic Prakriti Assessment
+SIH2026_PS_205,Smart Education,Software,AICTE,Gamified Immersive Virtual Reality Platform for Environmental Education
+SIH2026_PS_206,Smart Education,Software,Ministry of Education,Automated Facial Recognition Attendance and Analytics for Rural Schools
+SIH2026_PS_207,Blockchain & Cybersecurity,Software,Ministry of Home Affairs,Zero-Trust API Security Gateway for Critical Government Infrastructure
+SIH2026_PS_208,Blockchain & Cybersecurity,Software,DRDO,Secure Decentralized Identity Verification System using Zero-Knowledge Proofs
+SIH2026_PS_209,Clean & Green Technology / Renewable & Sustainable Energy,Software,"Ministry of Environment, Forest and Climate Change",Real-Time Carbon Footprint Tracking and Offsetting Ledger for Industries
+SIH2026_PS_210,Clean & Green Technology / Renewable & Sustainable Energy,Hardware,Ministry of Coal,Automated Dust Suppression and Air Quality Monitoring System for Coal Mines
+SIH2026_PS_211,Disaster Management,Software,Ministry of Home Affairs,Early Flood Prediction and Emergency Response Coordination Dashboard
+SIH2026_PS_212,Heritage & Culture / Travel & Tourism,Software,Ministry of Tourism,3D Virtual Reality Heritage Tourism and Digital Preservation Platform
+SIH2026_PS_213,Robotics and Drones / Smart Automation,Hardware,ISRO,Autonomous Drone Swarm Coordination for Search and Rescue Operations
+SIH2026_PS_214,Smart Vehicles / Space Technology,Software,ISRO,AI-Driven Predictive Maintenance System for Satellite Telemetry Systems
+SIH2026_PS_215,Transportation & Logistics,Software,Ministry of Railways,IoT-Based Smart Freight Tracking and Route Optimization System
+SIH2026_PS_216,Fitness & Sports / Toys & Games,Software,Ministry of Youth Affairs and Sports,AI-Powered Fitness Trainer and Athletic Form Correction Mobile App
+SIH2026_PS_217,Cybersecurity / Defense,Software,Ministry of Defence,Anomalous Network Traffic Detection in Tactical Military Networks
+SIH2026_PS_218,Smart Automation,Hardware,Government of Maharashtra,Smart Waste Segregation Robo-Bin using Computer Vision
+SIH2026_PS_219,Renewable Energy,Software,Government of Punjab,Predictive Grid Load Optimization for Decentralized Solar Plants
+SIH2026_PS_220,HealthTech / Ayush,Software,Ministry of Ayush,Machine Learning-Based Drug-Drug Interaction Checker for Ayush Systems
+SIH2026_PS_221,"Agriculture, FoodTech & Rural Development",Software,Ministry of Agriculture & Farmers Welfare,AI-based Crop Disease Detection and Management System
+SIH2026_PS_222,"Agriculture, FoodTech & Rural Development",Hardware,"Ministry of Fisheries, Animal Husbandry & Dairying",Smart Automatic Cattle Feeding and Health Monitoring IoT Device
+SIH2026_PS_223,MedTech / BioTech / HealthTech,Software,Ministry of Health & Family Welfare,Blockchain-based Secure Electronic Health Record (EHR) Exchange
+SIH2026_PS_224,MedTech / BioTech / HealthTech,Hardware,Ministry of Ayush,Non-Invasive Diagnostic Tool for Ayurvedic Prakriti Assessment
+SIH2026_PS_225,Smart Education,Software,AICTE,Gamified Immersive Virtual Reality Platform for Environmental Education
+SIH2026_PS_226,Smart Education,Software,Ministry of Education,Automated Facial Recognition Attendance and Analytics for Rural Schools

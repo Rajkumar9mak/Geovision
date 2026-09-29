@@ -1,0 +1,52 @@
+services:
+  db:
+    image: postgis/postgis:14-3.3
+    container_name: geoinsight_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-geoinsight_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-geoinsight_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rigx_network
+
+  rigx_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: geoinsight_rigx_app
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-geoinsight_db}
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-geoinsight_db}
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+      - STREAMLIT_SERVER_HEADLESS=true
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - rigx_network
+
+volumes:
+  postgis_data:
+    driver: local
+
+networks:
+  rigx_network:
+    driver: bridge
