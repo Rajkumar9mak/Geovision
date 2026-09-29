@@ -220,8 +220,9 @@ with col_left:
                 f'<div style="font-size:0.78rem; color:#8B949E; margin-top:4px;">'
                 f'<span>UWI: {row["uwi"]}</span> • <span>Operator: {row.get("operator", "N/A")}</span><br>'
                 f'<span>Distance: <b style="color:#00E5FF;">{row["distance_km"]} km</b></span> • '
-                f'<span>Total Depth: <b style="color:#E6EDF3;">{row.get("total_depth_m", "N/A")} m</b></span> • '
+                f'<span>Total Well Depth: <b style="color:#E6EDF3;">{row.get("total_depth_m", "N/A")} m</b></span> • '
                 f'<span>Status: <i style="color:#A5D6A7;">{row.get("status", "Active")}</i></span>'
+
                 f'</div>'
                 f'</div>'
             )

@@ -49,14 +49,17 @@ def generate_sample_wellbore_data(
     # Directional trajectory synthesis (Kickoff point at 800m, build and turn)
     x = np.zeros(n_points)
     y = np.zeros(n_points)
+    tvd = np.zeros(n_points)
+    tvd[0] = depths[0]
 
     kop = 800.0
     azimuth_base = 35.0 + (seed % 40)
     build_rate = 50.0 + (seed % 15)
+    max_inclination = 17.5 + (seed % 5) * 0.6
     for i, d in enumerate(depths):
         if d > kop:
             delta_d = d - kop
-            inclination_deg = min(58.0, (delta_d / 1200.0) * build_rate)
+            inclination_deg = min(max_inclination, (delta_d / 1200.0) * build_rate)
             azimuth_deg = azimuth_base + (delta_d / 1800.0) * 20.0
             inc_rad = math.radians(inclination_deg)
             az_rad = math.radians(azimuth_deg)
@@ -64,6 +67,9 @@ def generate_sample_wellbore_data(
             # Cumulative displacement
             x[i] = x[i - 1] + (step_m * math.sin(inc_rad) * math.sin(az_rad))
             y[i] = y[i - 1] + (step_m * math.sin(inc_rad) * math.cos(az_rad))
+            tvd[i] = tvd[i - 1] + (step_m * math.cos(inc_rad))
+        else:
+            tvd[i] = d
 
     # Synthetic Petrophysical & Drilling Metrics with well-specific formation shifts
     base_strata = np.sin((depths + depth_shift) / 115.0) * 32.0 + np.cos(depths / 42.0) * 16.0
@@ -79,6 +85,10 @@ def generate_sample_wellbore_data(
     # Resistivity (ohm.m: 0.5 to 150 log scale)
     res = np.clip(np.exp((gr - 50.0) / 32.0) + rng.normal(0, 0.8, n_points), 0.2, 200.0)
 
+    # Hydrostatic & baseline formation pressure profile (psi)
+    base_pressure = 4250.0 + (tvd - 3168.0) * 1.35 + (wob_shift * 2.0)
+    pressure = np.clip(base_pressure + rng.normal(0, 1.2, n_points), 3600.0, 5200.0)
+
     df = pd.DataFrame({
         "DEPTH_M": depths,
         "X_EAST_M": np.round(x, 2),
@@ -87,6 +97,8 @@ def generate_sample_wellbore_data(
         "WOB": np.round(wob, 2),
         "ROP": np.round(rop, 2),
         "RES": np.round(res, 2),
+        "TVD": np.round(tvd, 2),
+        "Pressure": np.round(pressure, 1),
     })
     return df
 

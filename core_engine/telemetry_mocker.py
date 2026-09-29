@@ -7,6 +7,7 @@ Provides DrillingSimulator to mock high-frequency surface and downhole drilling 
 
 import time
 import os
+import math
 import logging
 from pathlib import Path
 from typing import Generator, Dict, Any, Optional, Union
@@ -22,7 +23,8 @@ class DrillingSimulator:
     """
     Simulates real-time telemetry streaming from an active drilling rig.
     Reads historical time-series logs from data_source/production/,
-    yielding downward advancing depth, WOB, RPM, ROP, and Gamma Ray telemetry.
+    yielding downward advancing depth, TVD, Inclination, WOB, RPM, ROP,
+    Gamma Ray, and Pressure telemetry simulating active drill-bit progression.
     """
 
     DEFAULT_CSV_NAME = "active_rig_telemetry.csv"
@@ -60,6 +62,7 @@ class DrillingSimulator:
         """
         Read historical time-series CSV file from data_source/production/.
         If missing, generates high-fidelity telemetry automatically.
+        Ensures Depth, TVD, Inclination, WOB, RPM, ROP, Gamma_Ray, and Pressure exist.
         """
         target_path = self._resolve_file_path(file_path or self.file_path)
 
@@ -75,6 +78,10 @@ class DrillingSimulator:
                 cl = c.strip().lower()
                 if cl in ["depth", "depth_m", "md"]:
                     col_map[c] = "Depth"
+                elif cl in ["tvd", "true_vertical_depth", "tvd_m"]:
+                    col_map[c] = "TVD"
+                elif cl in ["inclination", "inc", "deviation", "dev"]:
+                    col_map[c] = "Inclination"
                 elif cl in ["wob", "weight_on_bit"]:
                     col_map[c] = "WOB"
                 elif cl in ["rpm", "rotations_per_minute"]:
@@ -83,15 +90,64 @@ class DrillingSimulator:
                     col_map[c] = "ROP"
                 elif cl in ["gamma_ray", "gamma", "gr"]:
                     col_map[c] = "Gamma_Ray"
+                elif cl in ["pressure", "press", "live_pressure", "spp", "standpipe_pressure", "pressure_psi"]:
+                    col_map[c] = "Pressure"
             self.df.rename(columns=col_map, inplace=True)
 
             # Ensure numeric conversion
-            for metric in ["Depth", "WOB", "RPM", "ROP", "Gamma_Ray"]:
+            for metric in ["Depth", "TVD", "Inclination", "WOB", "RPM", "ROP", "Gamma_Ray", "Pressure"]:
                 if metric in self.df.columns:
                     self.df[metric] = pd.to_numeric(self.df[metric], errors="coerce")
 
             self.df.dropna(subset=["Depth"], inplace=True)
             self.df.reset_index(drop=True, inplace=True)
+
+            # Backward-compatible graceful derivation if TVD, Inclination, or Pressure are missing
+            depths = self.df["Depth"].values
+            n_rows = len(depths)
+
+            if "Inclination" not in self.df.columns or self.df["Inclination"].isna().all():
+                # Deviated well inclination starting around 17.5 deg at 3200m and gently building
+                inc_base = 17.5 + (depths - 3200.0) * 0.010
+                inc = inc_base + 0.12 * np.sin(depths / 14.0)
+                self.df["Inclination"] = np.round(np.clip(inc, 15.0, 25.0), 2)
+
+            if "TVD" not in self.df.columns or self.df["TVD"].isna().all():
+                # Derive TVD dynamically: TVD = sum(MD_increment * cos(inclination))
+                incs = self.df["Inclination"].values
+                tvd_arr = np.zeros(n_rows)
+                # Calibrated baseline starting TVD = 3168.0m at 3200.0m MD (deviated offshore well)
+                tvd_arr[0] = 3168.0 + (depths[0] - 3200.0) * math.cos(math.radians(incs[0]))
+                for i in range(1, n_rows):
+                    d_md = depths[i] - depths[i - 1]
+                    inc_rad = math.radians(float(incs[i]))
+                    tvd_arr[i] = tvd_arr[i - 1] + d_md * math.cos(inc_rad)
+                self.df["TVD"] = np.round(tvd_arr, 2)
+
+            if "Pressure" not in self.df.columns or self.df["Pressure"].isna().all():
+                # Realistic drilling pressure: hydrostatic column + circulating friction (ECD) + hazard effects
+                tvd = self.df["TVD"].values
+                wob = self.df["WOB"].values if "WOB" in self.df.columns else np.full(n_rows, 25.0)
+                rop = self.df["ROP"].values if "ROP" in self.df.columns else np.full(n_rows, 20.0)
+                rpm = self.df["RPM"].values if "RPM" in self.df.columns else np.full(n_rows, 120.0)
+
+                # Base hydrostatic pressure gradient ~1.35 psi/m (11.2 ppg mud)
+                p_hydro = 4268.0 + 1.35 * (tvd - 3168.0)
+                # Circulating dynamics correlated with drilling parameters
+                p_circ = 0.35 * (wob - 25.0) + 0.22 * (rop - 20.0) + 0.12 * (rpm - 120.0)
+                # Small smooth operational variation
+                p_fluct = 3.5 * np.sin(depths / 16.0) + 1.8 * np.cos(depths / 7.0)
+
+                # Geohazard zones:
+                # 3245m Stuck pipe -> surge in torque/differential
+                h_stuck = 55.0 * np.exp(-((depths - 3245.0) / 2.8) ** 2)
+                # 3290m Fractured mud loss -> collapse of hydrostatic head / loss of standpipe pressure
+                h_loss = -220.0 * np.exp(-((depths - 3290.0) / 2.8) ** 2)
+                # 3340m Borehole pack-off -> annular restriction standpipe surge
+                h_pack = 310.0 * np.exp(-((depths - 3340.0) / 2.8) ** 2)
+
+                pressure = p_hydro + p_circ + p_fluct + h_stuck + h_loss + h_pack
+                self.df["Pressure"] = np.round(np.clip(pressure, 3600.0, 5200.0), 1)
 
             self.file_path = target_path
             self.current_index = 0
@@ -140,13 +196,33 @@ class DrillingSimulator:
         rpm = np.clip(120.0 + np.cos(depths / 22.0) * 15.0 + np.random.normal(0, 2.5, n_records), 80.0, 160.0)
         gr = np.clip(70.0 + np.sin(depths / 25.0) * 35.0 + np.random.normal(0, 2.0, n_records), 20.0, 140.0)
 
+        # Deviated inclination & TVD
+        inc = np.clip(17.5 + (depths - 3200.0) * 0.010 + 0.12 * np.sin(depths / 14.0), 15.0, 25.0)
+        tvd = np.zeros(n_records)
+        tvd[0] = 3168.0 + (depths[0] - 3200.0) * math.cos(math.radians(inc[0]))
+        for i in range(1, n_records):
+            d_md = depths[i] - depths[i - 1]
+            tvd[i] = tvd[i - 1] + d_md * math.cos(math.radians(inc[i]))
+
+        # Realistic drilling pressure
+        p_hydro = 4268.0 + 1.35 * (tvd - 3168.0)
+        p_circ = 0.35 * (wob - 25.0) + 0.22 * (rop - 20.0) + 0.12 * (rpm - 120.0)
+        p_fluct = 3.5 * np.sin(depths / 16.0) + 1.8 * np.cos(depths / 7.0)
+        h_stuck = 55.0 * np.exp(-((depths - 3245.0) / 2.8) ** 2)
+        h_loss = -220.0 * np.exp(-((depths - 3290.0) / 2.8) ** 2)
+        h_pack = 310.0 * np.exp(-((depths - 3340.0) / 2.8) ** 2)
+        pressure = np.clip(p_hydro + p_circ + p_fluct + h_stuck + h_loss + h_pack, 3600.0, 5200.0)
+
         synth_df = pd.DataFrame({
             "Timestamp": [t.strftime("%Y-%m-%d %H:%M:%S") for t in timestamps],
             "Depth": depths,
+            "TVD": np.round(tvd, 2),
+            "Inclination": np.round(inc, 2),
             "ROP": np.round(rop, 2),
             "WOB": np.round(wob, 2),
             "RPM": np.round(rpm, 1),
             "Gamma_Ray": np.round(gr, 2),
+            "Pressure": np.round(pressure, 1),
         })
         synth_df.to_csv(output_path, index=False)
 
@@ -182,10 +258,13 @@ class DrillingSimulator:
             telemetry_point = {
                 "Timestamp": row.get("Timestamp", time.strftime("%Y-%m-%d %H:%M:%S")),
                 "Depth": self.current_depth,
+                "TVD": float(row.get("TVD", self.current_depth * 0.9898)),
+                "Inclination": float(row.get("Inclination", 17.5)),
                 "WOB": float(row.get("WOB", 25.0)),
                 "RPM": float(row.get("RPM", 120.0)),
                 "ROP": float(row.get("ROP", 20.0)),
                 "Gamma_Ray": float(row.get("Gamma_Ray", 75.0)),
+                "Pressure": float(row.get("Pressure", 4280.0)),
                 "frame_index": self.current_index,
             }
 
@@ -252,10 +331,13 @@ class DrillingSimulator:
         return {
             "Timestamp": row.get("Timestamp", time.strftime("%Y-%m-%d %H:%M:%S")),
             "Depth": self.current_depth,
+            "TVD": float(row.get("TVD", self.current_depth * 0.9898)),
+            "Inclination": float(row.get("Inclination", 17.5)),
             "WOB": float(row.get("WOB", 25.0)),
             "RPM": float(row.get("RPM", 120.0)),
             "ROP": float(row.get("ROP", 20.0)),
             "Gamma_Ray": float(row.get("Gamma_Ray", 75.0)),
+            "Pressure": float(row.get("Pressure", 4280.0)),
             "frame_index": self.current_index,
             "active_hazard": hazard,
             "is_run_completed": is_completed or getattr(self, "is_run_completed", False),
@@ -275,6 +357,22 @@ class DrillingSimulator:
         row = self.df.iloc[self.current_index].to_dict()
         self.current_depth = float(row.get("Depth", self.FINAL_TARGET_DEPTH))
 
+        hazard = self.check_hazard_proximity(self.current_depth)
+        telemetry_point = {
+            "Timestamp": row.get("Timestamp", time.strftime("%Y-%m-%d %H:%M:%S")),
+            "Depth": self.current_depth,
+            "TVD": float(row.get("TVD", self.current_depth * 0.9898)),
+            "Inclination": float(row.get("Inclination", 19.1)),
+            "WOB": float(row.get("WOB", 25.0)),
+            "RPM": float(row.get("RPM", 120.0)),
+            "ROP": float(row.get("ROP", 20.0)),
+            "Gamma_Ray": float(row.get("Gamma_Ray", 75.0)),
+            "Pressure": float(row.get("Pressure", 4490.0)),
+            "frame_index": self.current_index,
+            "active_hazard": hazard,
+            "is_run_completed": True,
+        }
+
         try:
             import streamlit as st
             st.session_state["run_completed"] = True
@@ -283,11 +381,11 @@ class DrillingSimulator:
                 st.session_state.active_rig_metrics["is_streaming"] = False
                 st.session_state.active_rig_metrics["run_completed"] = True
                 st.session_state.active_rig_metrics["current_depth"] = self.current_depth
-                st.session_state.active_rig_metrics["latest_frame"] = row
+                st.session_state.active_rig_metrics["latest_frame"] = telemetry_point
         except Exception:
             pass
 
-        return row
+        return telemetry_point
 
     def get_streamed_history(self, limit: Optional[int] = None) -> pd.DataFrame:
         """

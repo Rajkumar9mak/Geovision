@@ -27,6 +27,7 @@ pages = [
     st.Page("pages/2_📊_Log_Analytics.py", title="Log Analytics", icon="📊"),
     st.Page("pages/3_⚠️_Hazard_Advisories.py", title="Hazard Advisories", icon="⚠️"),
     st.Page("pages/4_🧠_Knowledge_Retrieval.py", title="Knowledge Retrieval", icon="🧠"),
+    st.Page("pages/5_📄_Well_OCR_Intelligence.py", title="Well OCR Intelligence", icon="📄"),
 ]
 
 pg = st.navigation(pages)
@@ -134,12 +135,20 @@ with st.sidebar:
                 <b style="color:#E28743;">{cur_d:.1f} m MD</b>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <span style="color:#8B949E;">TVD:</span>
+                <span style="color:#E6EDF3;">{latest_dat.get('TVD', cur_d * 0.9898):.1f} m</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
                 <span style="color:#8B949E;">ROP:</span>
                 <span style="color:#E6EDF3;">{latest_dat.get('ROP', 22.4):.1f} m/hr</span>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
                 <span style="color:#8B949E;">WOB:</span>
                 <span style="color:#E6EDF3;">{latest_dat.get('WOB', 25.0):.1f} klbs</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <span style="color:#8B949E;">Pressure:</span>
+                <span style="color:#E6EDF3;">{latest_dat.get('Pressure', 4280.0):,.0f} psi</span>
             </div>
             <div style="display:flex; justify-content:space-between;">
                 <span style="color:#8B949E;">Status:</span>
@@ -160,15 +169,22 @@ with st.sidebar:
 # ==============================================================================
 # ENTERPRISE COMMAND HEADER & PERSISTENT GLOBAL ALERT OVERLAY
 # ==============================================================================
+is_stream_active = st.session_state.get("active_rig_metrics", {}).get("is_streaming", True)
+mode_status_html = (
+    '<span style="color:#4CAF50; font-weight:600;">● TELEMETRY STREAM ACTIVE</span>'
+    if is_stream_active
+    else '<span style="color:#8B949E; font-weight:600;">○ TELEMETRY STREAM PAUSED</span>'
+)
+
 st.markdown(
-    """
+    f"""
     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #30363D; padding-bottom:8px; margin-bottom:14px;">
         <div style="display:flex; align-items:center; gap:10px;">
             <span class="rigx-status-badge">eRTMAC-NWIS ENTERPRISE</span>
             <span style="font-size:1.05rem; font-weight:700; color:#F0F6FC;">GeoInsight-RigX Command Hub</span>
         </div>
         <div style="font-size:0.8rem; color:#8B949E;">
-            Well: <b style="color:#E28743;">RIGX-TARGET-01</b> | System Mode: <span style="color:#4CAF50; font-weight:600;">● TELEMETRY STREAM ACTIVE</span>
+            Well: <b style="color:#E28743;">RIGX-TARGET-01</b> | System Mode: {mode_status_html}
         </div>
     </div>
     """,

@@ -1,20 +1,30 @@
 """
 GeoInsight-RigX (eRTMAC-NWIS)
 Page 4: Subsurface Knowledge Retrieval Center
-Conversational RAG interface powered by LangChain, all-MiniLM-L6-v2 embeddings,
-and local ChromaDB for querying historical offset well reports and geohazard archives.
+Architecture:
+  Upload PDF → PDF Text Extraction (Normal PDF: PyMuPDF | Scanned PDF: OCR Tesseract)
+  → Clean Text → Chunk by page → Embedding Model (all-MiniLM-L6-v2) → ChromaDB
+  → User Query → Similarity Search → Retrieved Chunks → LLM → Answer + Page Citations
 """
 
-import streamlit as st
+import os
 from pathlib import Path
-from core_engine.rag_pipeline import query_historical_reports, build_or_load_vector_store
+import streamlit as st
+import numpy as np
+
+from core_engine.rag_pipeline import (
+    get_rag_pipeline,
+    query_historical_reports,
+    synthesize_rag_response,
+    build_or_load_vector_store,
+)
 from core_engine.ui_theme import inject_industrial_theme_css
 
 # Ensure persistent dark industrial theme and Z-index isolation across page switches
 inject_industrial_theme_css()
 
 st.markdown("## 🧠 Subsurface Knowledge Retrieval Center")
-st.caption("Local Vector Search (ChromaDB) • all-MiniLM-L6-v2 Embeddings • Open-Source Historical PDF Archives")
+st.caption("Dual-Engine Ingestion (PyMuPDF / OCR Tesseract) • all-MiniLM-L6-v2 Embeddings • ChromaDB • Strict Page Citations")
 
 # ==============================================================================
 # EDGE-CASE FALLBACK: VERIFY TARGET WELL SELECTION FROM GEOSPATIAL HUB
@@ -65,8 +75,12 @@ if offset_state is None:
             st.rerun()
     st.stop()
 
+# Initialize or load pipeline
+rag_pipeline = get_rag_pipeline()
+indexed_stats = rag_pipeline.get_indexed_stats()
+
 # Top Intelligence Metadata Bar
-col_m1, col_m2, col_m3 = st.columns([1.5, 1, 1])
+col_m1, col_m2, col_m3 = st.columns([1.5, 1, 1.2])
 with col_m1:
     st.markdown(
         """
@@ -82,17 +96,19 @@ with col_m2:
         """
         <div style="background-color:#161B22; border:1px solid #30363D; border-radius:6px; padding:10px 14px; font-size:0.82rem;">
             <div style="color:#8B949E;">Embedding Model</div>
-            <b style="color:#58A6FF;">all-MiniLM-L6-v2</b> <span style="color:#8B949E;">(384-dim)</span>
+            <b style="color:#58A6FF;">all-MiniLM-L6-v2</b> <span style="color:#8B949E;">(384-dim ONNX)</span>
         </div>
         """,
         unsafe_allow_html=True,
     )
 with col_m3:
+    n_reports = indexed_stats.get("total_reports", 0)
+    n_chunks = indexed_stats.get("total_chunks", 0)
     st.markdown(
-        """
+        f"""
         <div style="background-color:#161B22; border:1px solid #30363D; border-radius:6px; padding:10px 14px; font-size:0.82rem;">
-            <div style="color:#8B949E;">Indexed Literature</div>
-            <b style="color:#F0F6FC;">3 Technical PDFs</b> • <span style="color:#8B949E;">1000ch Chunks</span>
+            <div style="color:#8B949E;">Indexed Subsurface Literature</div>
+            <b style="color:#F0F6FC;">{n_reports} Technical PDFs</b> • <span style="color:#58A6FF;">{n_chunks} Page Chunks</span>
         </div>
         """,
         unsafe_allow_html=True,
@@ -126,6 +142,7 @@ if "rag_messages" not in st.session_state:
                 "and historical geohazard analyses (Volve Field, Gulf Offshore, HPHT). Ask me any question regarding historical "
                 "extraction failures, lost circulation, stuck pipe events, or formation mitigation directives."
             ),
+            "citations": [],
             "sources": [],
         }
     ]
@@ -134,16 +151,31 @@ if "rag_messages" not in st.session_state:
 for msg in st.session_state.rag_messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
+        
+        # Render Citations Badges if available
+        if msg.get("citations"):
+            citations_html = " ".join([
+                f"<span style='background-color:#1F2937; color:#58A6FF; border:1px solid #30363D; border-radius:4px; padding:3px 8px; font-size:0.75rem; font-family:monospace; margin-right:6px;'>📑 {c['source_file']} (P. {c['page_number']})</span>"
+                for c in msg["citations"]
+            ])
+            st.markdown(f"<div style='margin-top:8px; margin-bottom:12px;'><b>Page Citations:</b> {citations_html}</div>", unsafe_allow_html=True)
+            
         if msg.get("sources"):
             st.markdown("---")
             st.markdown("##### 📚 Verified Historical Source References (Transparent RAG Layer):")
             for idx, src in enumerate(msg["sources"], 1):
+                method_badge = src.get('extraction_method', 'PyMuPDF')
+                score_pct = round(src.get('score', 0.5) * 100, 1)
                 st.markdown(
                     f"""
                     <div style="background-color:#161B22; border:1px solid #30363D; border-left:4px solid #E28743; border-radius:6px; padding:12px 14px; margin-bottom:10px;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:0.8rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:0.8rem;">
                             <span style="color:#E28743; font-weight:700;">📄 Source File: <b>{src['source_file']}</b></span>
-                            <span style="color:#58A6FF; font-weight:600;">📑 Page: <b>{src['page_number']}</b></span>
+                            <span>
+                                <span style="background-color:#21262D; color:#7EE787; border:1px solid #30363D; border-radius:4px; padding:2px 6px; font-size:0.75rem; margin-right:6px;">{method_badge}</span>
+                                <span style="background-color:#21262D; color:#58A6FF; border:1px solid #30363D; border-radius:4px; padding:2px 6px; font-size:0.75rem; margin-right:6px;">Match: {score_pct}%</span>
+                                <span style="color:#58A6FF; font-weight:600;">📑 Page: <b>{src['page_number']}</b></span>
+                            </span>
                         </div>
                         <div style="font-size:0.88rem; color:#E6EDF3; line-height:1.5; font-style:italic;">
                             "{src['content']}"
@@ -159,37 +191,44 @@ active_query = quick_prompt or user_input
 
 if active_query:
     # 1. Display User Message
-    st.session_state.rag_messages.append({"role": "user", "content": active_query, "sources": []})
+    st.session_state.rag_messages.append({"role": "user", "content": active_query, "citations": [], "sources": []})
     with st.chat_message("user"):
         st.markdown(active_query)
 
-    # 2. Retrieve Relevant Chunks via SubsurfaceRAGPipeline
+    # 2. Retrieve & Synthesize via RAG Pipeline
     with st.chat_message("assistant"):
-        with st.spinner("Searching ChromaDB semantic vector store with all-MiniLM-L6-v2..."):
-            retrieved_chunks = query_historical_reports(active_query, k=3)
-
-        if not retrieved_chunks:
-            response_text = "No direct semantic matches were found in the historical report archives. Try rephrasing your query or selecting one of the suggested topics above."
-            st.markdown(response_text)
-            st.session_state.rag_messages.append({"role": "assistant", "content": response_text, "sources": []})
-        else:
-            # Construct synthetic summary answer from top chunk
-            top_source = retrieved_chunks[0]
-            summary_intro = (
-                f"Based on historical offset well records in **{top_source['source_file']}** (Page {top_source['page_number']}), "
-                f"here are the verified extraction findings and technical directives:"
-            )
-            st.markdown(summary_intro)
-
+        with st.spinner("Executing Similarity Search in ChromaDB with all-MiniLM-L6-v2 embeddings..."):
+            rag_output = synthesize_rag_response(active_query, k=3)
+            
+        answer_text = rag_output.get("answer", "")
+        citations = rag_output.get("citations", [])
+        sources = rag_output.get("sources", [])
+        
+        st.markdown(answer_text)
+        
+        if citations:
+            citations_html = " ".join([
+                f"<span style='background-color:#1F2937; color:#58A6FF; border:1px solid #30363D; border-radius:4px; padding:3px 8px; font-size:0.75rem; font-family:monospace; margin-right:6px;'>📑 {c['source_file']} (P. {c['page_number']})</span>"
+                for c in citations
+            ])
+            st.markdown(f"<div style='margin-top:8px; margin-bottom:12px;'><b>Page Citations:</b> {citations_html}</div>", unsafe_allow_html=True)
+            
+        if sources:
             st.markdown("---")
             st.markdown("##### 📚 Verified Historical Source References (Transparent RAG Layer):")
-            for idx, src in enumerate(retrieved_chunks, 1):
+            for idx, src in enumerate(sources, 1):
+                method_badge = src.get('extraction_method', 'PyMuPDF')
+                score_pct = round(src.get('score', 0.5) * 100, 1)
                 st.markdown(
                     f"""
                     <div style="background-color:#161B22; border:1px solid #30363D; border-left:4px solid #E28743; border-radius:6px; padding:12px 14px; margin-bottom:10px;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:0.8rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:0.8rem;">
                             <span style="color:#E28743; font-weight:700;">📄 Source File: <b>{src['source_file']}</b></span>
-                            <span style="color:#58A6FF; font-weight:600;">📑 Page: <b>{src['page_number']}</b></span>
+                            <span>
+                                <span style="background-color:#21262D; color:#7EE787; border:1px solid #30363D; border-radius:4px; padding:2px 6px; font-size:0.75rem; margin-right:6px;">{method_badge}</span>
+                                <span style="background-color:#21262D; color:#58A6FF; border:1px solid #30363D; border-radius:4px; padding:2px 6px; font-size:0.75rem; margin-right:6px;">Match: {score_pct}%</span>
+                                <span style="color:#58A6FF; font-weight:600;">📑 Page: <b>{src['page_number']}</b></span>
+                            </span>
                         </div>
                         <div style="font-size:0.88rem; color:#E6EDF3; line-height:1.5; font-style:italic;">
                             "{src['content']}"
@@ -199,9 +238,11 @@ if active_query:
                     unsafe_allow_html=True,
                 )
 
-            st.session_state.rag_messages.append({
-                "role": "assistant",
-                "content": summary_intro,
-                "sources": retrieved_chunks,
-            })
-            st.rerun()
+        st.session_state.rag_messages.append({
+            "role": "assistant",
+            "content": answer_text,
+            "citations": citations,
+            "sources": sources,
+        })
+        st.rerun()
+

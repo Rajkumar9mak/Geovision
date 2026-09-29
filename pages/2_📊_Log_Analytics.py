@@ -53,8 +53,13 @@ if offset_state is None or "baseline_curves_df" not in offset_state or offset_st
             b_df = generate_sample_wellbore_data(well_name=p_name, total_depth_m=p_td, step_m=1.0)
             b_df = b_df[(b_df["DEPTH_M"] >= 3180.0) & (b_df["DEPTH_M"] <= 3450.0)].copy()
             b_df.rename(columns={"DEPTH_M": "Depth", "GR": "Gamma_Ray"}, inplace=True)
-            b_df["RPM"] = np.clip(115.0 + np.sin(b_df["Depth"] / 20.0) * 12.0, 90.0, 140.0)
-            
+            if "RPM" not in b_df.columns:
+                b_df["RPM"] = np.clip(115.0 + np.sin(b_df["Depth"] / 20.0) * 12.0, 90.0, 140.0)
+            if "TVD" not in b_df.columns:
+                b_df["TVD"] = np.round(b_df["Depth"] * 0.9898, 2)
+            if "Pressure" not in b_df.columns:
+                b_df["Pressure"] = np.round(4250.0 + (b_df["TVD"] - 3168.0) * 1.35, 1)
+
             st.session_state.selected_offset_wells = {
                 "dataframe": df_off,
                 "primary_well": primary,
@@ -69,6 +74,7 @@ if offset_state is None or "baseline_curves_df" not in offset_state or offset_st
                     "avg_wob": round(float(b_df["WOB"].mean()), 1),
                     "avg_rpm": round(float(b_df["RPM"].mean()), 0),
                     "avg_gr": round(float(b_df["Gamma_Ray"].mean()), 1),
+                    "avg_pressure": round(float(b_df["Pressure"].mean()), 1),
                 },
                 "target_coordinates": {"lat": 19.4215, "lon": 71.3510, "radius_km": 50.0},
             }
@@ -84,6 +90,14 @@ primary_uwi = offset_state.get("primary_well_uwi", "N/A")
 primary_op = offset_state.get("primary_well_operator", "National Operator")
 baseline_df = offset_state["baseline_curves_df"]
 averages = offset_state["numerical_averages"]
+
+# Ensure baseline_df has TVD, Pressure, and numerical averages
+if "TVD" not in baseline_df.columns:
+    baseline_df["TVD"] = np.round(baseline_df["Depth"] * 0.9898, 2)
+if "Pressure" not in baseline_df.columns:
+    baseline_df["Pressure"] = np.round(4250.0 + (baseline_df["TVD"] - 3168.0) * 1.35, 1)
+if "avg_pressure" not in averages:
+    averages["avg_pressure"] = round(float(baseline_df["Pressure"].mean()), 1)
 
 # Ensure DrillingSimulator and active_rig_metrics exist
 if "drilling_sim" not in st.session_state:
@@ -114,12 +128,17 @@ def update_offset_baseline_by_index(selected_idx: int):
     baseline_df.rename(columns={"DEPTH_M": "Depth", "GR": "Gamma_Ray"}, inplace=True)
     if "RPM" not in baseline_df.columns:
         baseline_df["RPM"] = np.clip(115.0 + np.sin(baseline_df["Depth"] / 20.0) * 12.0, 90.0, 140.0)
+    if "TVD" not in baseline_df.columns:
+        baseline_df["TVD"] = np.round(baseline_df["Depth"] * 0.9898, 2)
+    if "Pressure" not in baseline_df.columns:
+        baseline_df["Pressure"] = np.round(4250.0 + (baseline_df["TVD"] - 3168.0) * 1.35, 1)
 
     averages = {
         "avg_rop": round(float(baseline_df["ROP"].mean()), 1),
         "avg_wob": round(float(baseline_df["WOB"].mean()), 1),
         "avg_rpm": round(float(baseline_df["RPM"].mean()), 0),
         "avg_gr": round(float(baseline_df["Gamma_Ray"].mean()), 1),
+        "avg_pressure": round(float(baseline_df["Pressure"].mean()), 1),
     }
 
     st.session_state.selected_offset_wells = {
@@ -172,7 +191,9 @@ with ctrl_col1:
 
 with ctrl_col2:
     live_toggle = st.toggle("Live Telemetry Stream", value=st.session_state.active_rig_metrics.get("is_streaming", True))
-    st.session_state.active_rig_metrics["is_streaming"] = live_toggle
+    if live_toggle != st.session_state.active_rig_metrics.get("is_streaming", True):
+        st.session_state.active_rig_metrics["is_streaming"] = live_toggle
+        st.rerun()
 
 with ctrl_col3:
     if st.button("Advance Bit (+5m)", use_container_width=True, help="Advance simulation step manually"):
@@ -184,37 +205,17 @@ with ctrl_col3:
 
 with ctrl_col4:
     if st.button("Final Row (TD)", use_container_width=True, help="Simulate bit reaching final row of CSV (3,365m TD)"):
-        sim.jump_to_final_row()
+        final_point = sim.jump_to_final_row()
+        st.session_state.active_rig_metrics["current_depth"] = final_point["Depth"]
+        st.session_state.active_rig_metrics["latest_frame"] = final_point
+        st.session_state.active_rig_metrics["history_df"] = sim.get_streamed_history(limit=250)
+        st.session_state.active_rig_metrics["is_streaming"] = False
         st.rerun()
 
-# Top Live Telemetry KPI Cards compared against numerical baseline averages
-latest = st.session_state.active_rig_metrics["latest_frame"]
-curr_depth = st.session_state.active_rig_metrics["current_depth"]
-curr_rop = latest.get("ROP", 22.4)
-curr_wob = latest.get("WOB", 25.1)
-curr_rpm = latest.get("RPM", 120.0)
-curr_gr = latest.get("Gamma_Ray", 74.5)
 
-avg_offset_rop = averages.get("avg_rop", 20.0)
-avg_offset_wob = averages.get("avg_wob", 24.0)
-avg_offset_gr = averages.get("avg_gr", 70.0)
-
-m_col1, m_col2, m_col3, m_col4, m_col5 = st.columns(5)
-with m_col1:
-    st.metric("Bit Depth (MD)", f"{curr_depth:.1f} m", f"+{curr_rop/10.0:.2f} m/step")
-with m_col2:
-    st.metric("Live ROP", f"{curr_rop:.1f} m/hr", f"{curr_rop - avg_offset_rop:+.1f} vs {primary_name}")
-with m_col3:
-    st.metric("Live WOB", f"{curr_wob:.1f} klbs", f"{curr_wob - avg_offset_wob:+.1f} vs {primary_name}")
-with m_col4:
-    st.metric("Rotary Speed (RPM)", f"{curr_rpm:.0f} RPM", "Active Surface Drive")
-with m_col5:
-    st.metric("Gamma Ray (Lithology)", f"{curr_gr:.1f} API", f"{curr_gr - avg_offset_gr:+.1f} API")
-
-
-# Define Fragment for Streaming Multi-track Chart (Updates every 1s when live)
+# Define Fragment for Streaming Multi-track Chart & Live KPI Cards (Updates every 1s when live)
 @st.fragment(run_every="1s" if st.session_state.active_rig_metrics.get("is_streaming", False) else None)
-def render_live_multi_track():
+def render_live_telemetry_dashboard():
     # If live streaming is active, step the simulator
     if st.session_state.active_rig_metrics.get("is_streaming", False):
         new_point = sim.step(n=1)
@@ -229,22 +230,88 @@ def render_live_multi_track():
 
     live_df = st.session_state.active_rig_metrics["history_df"]
     current_bit_depth = st.session_state.active_rig_metrics["current_depth"]
+    latest = st.session_state.active_rig_metrics["latest_frame"]
 
-    # Construct High-Density Multi-Track Subplots (1 Row, 3 Columns)
+    # ONE authoritative latest telemetry row (Requirement 16)
+    curr_depth = float(latest.get("Depth", current_bit_depth))
+    curr_tvd = float(latest.get("TVD", curr_depth * 0.9898))
+    curr_inc = float(latest.get("Inclination", 17.6))
+    curr_rop = float(latest.get("ROP", 22.4))
+    curr_wob = float(latest.get("WOB", 25.1))
+    curr_rpm = float(latest.get("RPM", 120.0))
+    curr_gr = float(latest.get("Gamma_Ray", 74.5))
+    curr_pressure = float(latest.get("Pressure", 4280.0))
+
+    avg_offset_rop = averages.get("avg_rop", 20.0)
+    avg_offset_wob = averages.get("avg_wob", 24.0)
+    avg_offset_gr = averages.get("avg_gr", 70.0)
+    avg_offset_press = averages.get("avg_pressure", 4250.0)
+
+    # TVD delta indicator (Requirement 1)
+    if len(live_df) > 1 and "TVD" in live_df.columns:
+        prev_tvd = float(live_df.iloc[-2]["TVD"])
+        tvd_step = curr_tvd - prev_tvd
+    else:
+        tvd_step = 0.8
+    if tvd_step <= 0.001:
+        tvd_step = 0.8
+    tvd_indicator = f"↓ {tvd_step:.1f} m/step"
+
+    # Live Pressure delta indicator (Requirement 1)
+    delta_press_baseline = curr_pressure - avg_offset_press
+    press_arrow = "↑" if delta_press_baseline >= 0 else "↓"
+    press_indicator = f"{press_arrow} {delta_press_baseline:+.0f} psi"
+
+    # Depth step delta
+    if len(live_df) > 1 and "Depth" in live_df.columns:
+        prev_depth = float(live_df.iloc[-2]["Depth"])
+        depth_step = curr_depth - prev_depth
+    else:
+        depth_step = curr_rop / 10.0
+    if depth_step <= 0.001:
+        depth_step = 0.2
+
+    # Top Live Telemetry KPI Cards (Requirement 1: 7 cards in exact order)
+    # Bit Depth (MD), TVD, Live ROP, Live WOB, Rotary Speed (RPM), Live Pressure, Gamma Ray
+    kpi_col1, kpi_col2, kpi_col3, kpi_col4, kpi_col5, kpi_col6, kpi_col7 = st.columns(7)
+    with kpi_col1:
+        st.metric("Bit Depth (MD)", f"{curr_depth:.1f} m", f"+{depth_step:.2f} m/step")
+    with kpi_col2:
+        st.metric("TVD", f"{curr_tvd:.1f} m", tvd_indicator)
+    with kpi_col3:
+        st.metric("Live ROP", f"{curr_rop:.1f} m/hr", f"{curr_rop - avg_offset_rop:+.1f} vs {primary_name}")
+    with kpi_col4:
+        st.metric("Live WOB", f"{curr_wob:.1f} klbs", f"{curr_wob - avg_offset_wob:+.1f} vs {primary_name}")
+    with kpi_col5:
+        st.metric("Rotary Speed (RPM)", f"{curr_rpm:.0f} RPM", "Active Surface Drive")
+    with kpi_col6:
+        st.metric("Live Pressure", f"{curr_pressure:,.0f} psi", press_indicator)
+    with kpi_col7:
+        st.metric("Gamma Ray (Lithology)", f"{curr_gr:.1f} API", f"{curr_gr - avg_offset_gr:+.1f} API")
+
+    st.markdown("<div style='margin-top: 14px;'></div>", unsafe_allow_html=True)
+
+    # Construct High-Density Multi-Track Subplots (Row 1: 3 Columns, Row 2: 2 Columns)
     fig = make_subplots(
-        rows=1,
-        cols=3,
-        shared_yaxes=True,
-        horizontal_spacing=0.04,
+        rows=2,
+        cols=6,
+        specs=[
+            [{"colspan": 2}, None, {"colspan": 2}, None, {"colspan": 2}, None],
+            [{"colspan": 3}, None, None, {"colspan": 3}, None, None],
+        ],
+        shared_yaxes=False,
+        vertical_spacing=0.09,
+        horizontal_spacing=0.035,
         subplot_titles=(
             "<b>Track 1: Rate of Penetration (ROP)</b>",
             "<b>Track 2: Weight on Bit (WOB) & RPM</b>",
             "<b>Track 3: Gamma Ray (Lithology)</b>",
+            "<b>Track 4: Formation & Circulating Pressure</b>",
+            "<b>Track 5: TVD vs Measured Depth (MD)</b>",
         ),
     )
 
     # TRACK 1: RATE OF PENETRATION (ROP)
-    # 1. Historical Baseline ROP from discovered offset well (Muted Blue/Grey)
     if "ROP" in baseline_df.columns and "Depth" in baseline_df.columns:
         fig.add_trace(
             go.Scatter(
@@ -260,7 +327,6 @@ def render_live_multi_track():
             col=1,
         )
 
-    # 2. Live Telemetry ROP (Primary Highlight #E28743)
     if not live_df.empty and "ROP" in live_df.columns:
         fig.add_trace(
             go.Scatter(
@@ -269,7 +335,24 @@ def render_live_multi_track():
                 mode="lines+markers",
                 name="Live ROP (Target)",
                 line=dict(color="#E28743", width=2.8),
-                marker=dict(size=4, color="#E28743"),
+                marker=dict(size=3.5, color="#E28743"),
+                hoverinfo="x+y+name",
+            ),
+            row=1,
+            col=1,
+        )
+        # Highlighted current live point marker (Requirement 6)
+        fig.add_trace(
+            go.Scatter(
+                x=[curr_rop],
+                y=[curr_depth],
+                mode="markers+text",
+                name="Current Live ROP",
+                marker=dict(size=10, color="#FFB74D", line=dict(color="#FFFFFF", width=1.6)),
+                text=[" LIVE"],
+                textposition="middle right",
+                textfont=dict(color="#FFB74D", size=9, family="monospace"),
+                showlegend=False,
                 hoverinfo="x+y+name",
             ),
             row=1,
@@ -277,7 +360,6 @@ def render_live_multi_track():
         )
 
     # TRACK 2: WEIGHT ON BIT (WOB) & RPM
-    # 1. Historical Baseline WOB (Muted Grey)
     if "WOB" in baseline_df.columns:
         fig.add_trace(
             go.Scatter(
@@ -290,14 +372,13 @@ def render_live_multi_track():
                 hoverinfo="x+y+name",
             ),
             row=1,
-            col=2,
+            col=3,
         )
 
-    # 2. Historical Baseline RPM (Muted Blue)
     if "RPM" in baseline_df.columns:
         fig.add_trace(
             go.Scatter(
-                x=baseline_df["RPM"] / 5.0,  # Scaled for 0-40 track
+                x=baseline_df["RPM"] / 5.0,
                 y=baseline_df["Depth"],
                 mode="lines",
                 name=f"{primary_name} Baseline RPM (/5)",
@@ -306,10 +387,9 @@ def render_live_multi_track():
                 hoverinfo="x+y+name",
             ),
             row=1,
-            col=2,
+            col=3,
         )
 
-    # 3. Live Telemetry WOB (Primary Amber #E28743)
     if not live_df.empty and "WOB" in live_df.columns:
         fig.add_trace(
             go.Scatter(
@@ -318,14 +398,13 @@ def render_live_multi_track():
                 mode="lines+markers",
                 name="Live WOB (Target)",
                 line=dict(color="#E28743", width=2.8),
-                marker=dict(size=4, color="#E28743"),
+                marker=dict(size=3.5, color="#E28743"),
                 hoverinfo="x+y+name",
             ),
             row=1,
-            col=2,
+            col=3,
         )
 
-    # 4. Live Telemetry RPM (Warm Gold #FFB74D)
     if not live_df.empty and "RPM" in live_df.columns:
         fig.add_trace(
             go.Scatter(
@@ -337,11 +416,29 @@ def render_live_multi_track():
                 hoverinfo="x+y+name",
             ),
             row=1,
-            col=2,
+            col=3,
+        )
+
+    if not live_df.empty:
+        # Highlighted current live point marker (Requirement 6)
+        fig.add_trace(
+            go.Scatter(
+                x=[curr_wob],
+                y=[curr_depth],
+                mode="markers+text",
+                name="Current Live WOB",
+                marker=dict(size=10, color="#FFB74D", line=dict(color="#FFFFFF", width=1.6)),
+                text=[" LIVE"],
+                textposition="middle right",
+                textfont=dict(color="#FFB74D", size=9, family="monospace"),
+                showlegend=False,
+                hoverinfo="x+y+name",
+            ),
+            row=1,
+            col=3,
         )
 
     # TRACK 3: GAMMA RAY (LITHOLOGY)
-    # 1. Historical Baseline Gamma Ray (Muted Blue/Grey)
     if "Gamma_Ray" in baseline_df.columns:
         fig.add_trace(
             go.Scatter(
@@ -354,10 +451,9 @@ def render_live_multi_track():
                 hoverinfo="x+y+name",
             ),
             row=1,
-            col=3,
+            col=5,
         )
 
-    # 2. Live Telemetry Gamma Ray (Primary Amber #E28743)
     if not live_df.empty and "Gamma_Ray" in live_df.columns:
         fig.add_trace(
             go.Scatter(
@@ -366,39 +462,167 @@ def render_live_multi_track():
                 mode="lines+markers",
                 name="Live Gamma Ray (Target)",
                 line=dict(color="#E28743", width=2.8),
-                marker=dict(size=4, color="#E28743"),
+                marker=dict(size=3.5, color="#E28743"),
                 hoverinfo="x+y+name",
             ),
             row=1,
-            col=3,
+            col=5,
+        )
+        # Highlighted current live point marker (Requirement 6)
+        fig.add_trace(
+            go.Scatter(
+                x=[curr_gr],
+                y=[curr_depth],
+                mode="markers+text",
+                name="Current Live GR",
+                marker=dict(size=10, color="#FFB74D", line=dict(color="#FFFFFF", width=1.6)),
+                text=[" LIVE"],
+                textposition="middle right",
+                textfont=dict(color="#FFB74D", size=9, family="monospace"),
+                showlegend=False,
+                hoverinfo="x+y+name",
+            ),
+            row=1,
+            col=5,
         )
 
-    # Add Horizontal Current Bit Depth Indicator Line across all 3 tracks
-    for col_idx in [1, 2, 3]:
+    # TRACK 4: PRESSURE (Requirement 4)
+    if "Pressure" in baseline_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=baseline_df["Pressure"],
+                y=baseline_df["Depth"],
+                mode="lines",
+                name=f"{primary_name} Baseline Pressure",
+                line=dict(color="#58A6FF", width=1.6, dash="dash"),
+                opacity=0.65,
+                hoverinfo="x+y+name",
+            ),
+            row=2,
+            col=1,
+        )
+
+    if not live_df.empty and "Pressure" in live_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=live_df["Pressure"],
+                y=live_df["Depth"],
+                mode="lines+markers",
+                name="Live Pressure (Target)",
+                line=dict(color="#E28743", width=2.8),
+                marker=dict(size=3.5, color="#E28743"),
+                hoverinfo="x+y+name",
+            ),
+            row=2,
+            col=1,
+        )
+        # Highlighted current live point marker (Requirement 6)
+        fig.add_trace(
+            go.Scatter(
+                x=[curr_pressure],
+                y=[curr_depth],
+                mode="markers+text",
+                name="Current Live Pressure",
+                marker=dict(size=10, color="#FFB74D", line=dict(color="#FFFFFF", width=1.6)),
+                text=[" LIVE"],
+                textposition="middle right",
+                textfont=dict(color="#FFB74D", size=9, family="monospace"),
+                showlegend=False,
+                hoverinfo="x+y+name",
+            ),
+            row=2,
+            col=1,
+        )
+
+    # TRACK 5: TVD vs MD (Requirement 5)
+    if "TVD" in baseline_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=baseline_df["TVD"],
+                y=baseline_df["Depth"],
+                mode="lines",
+                name=f"{primary_name} Baseline TVD",
+                line=dict(color="#58A6FF", width=1.6, dash="dash"),
+                opacity=0.65,
+                hoverinfo="x+y+name",
+            ),
+            row=2,
+            col=4,
+        )
+
+    if not live_df.empty and "TVD" in live_df.columns:
+        # Reference Vertical Line (MD = TVD) to visually show well deviation
+        fig.add_trace(
+            go.Scatter(
+                x=live_df["Depth"],
+                y=live_df["Depth"],
+                mode="lines",
+                name="Vertical Well Ref (MD=TVD)",
+                line=dict(color="#484F58", width=1.2, dash="dot"),
+                opacity=0.55,
+                hoverinfo="x+y+name",
+            ),
+            row=2,
+            col=4,
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=live_df["TVD"],
+                y=live_df["Depth"],
+                mode="lines+markers",
+                name="Live TVD (Target)",
+                line=dict(color="#E28743", width=2.8),
+                marker=dict(size=3.5, color="#E28743"),
+                hoverinfo="x+y+name",
+            ),
+            row=2,
+            col=4,
+        )
+        # Highlighted current live point marker (Requirement 6)
+        fig.add_trace(
+            go.Scatter(
+                x=[curr_tvd],
+                y=[curr_depth],
+                mode="markers+text",
+                name="Current Live TVD",
+                marker=dict(size=10, color="#FFB74D", line=dict(color="#FFFFFF", width=1.6)),
+                text=[" LIVE"],
+                textposition="middle right",
+                textfont=dict(color="#FFB74D", size=9, family="monospace"),
+                showlegend=False,
+                hoverinfo="x+y+name",
+            ),
+            row=2,
+            col=4,
+        )
+
+    # Add Horizontal Current Bit Depth Indicator Line across all 5 tracks (Requirement 7)
+    for r, c in [(1, 1), (1, 3), (1, 5), (2, 1), (2, 4)]:
+        annot = f"LIVE • {curr_depth:.1f} m MD" if (r, c) in [(1, 5), (2, 4)] else None
         fig.add_hline(
-            y=current_bit_depth,
+            y=curr_depth,
             line=dict(color="#E28743", width=1.8, dash="dash"),
-            annotation_text=f"Bit: {current_bit_depth:.1f} m" if col_idx == 3 else None,
+            annotation_text=annot,
             annotation_position="bottom right",
             annotation_font=dict(color="#E28743", size=10, family="monospace"),
-            row=1,
-            col=col_idx,
+            row=r,
+            col=c,
         )
 
     # Dark Industrial Theme Configuration & Inverted Y-Axis
     min_d = 3190.0
-    max_d = max(3380.0, current_bit_depth + 40.0)
+    max_d = max(3380.0, curr_depth + 40.0)
 
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#E6EDF3", family="sans-serif"),
-        height=720,
-        margin=dict(l=60, r=30, t=50, b=40),
+        height=880,
+        margin=dict(l=65, r=30, t=50, b=40),
         legend=dict(
             orientation="h",
             yanchor="bottom",
-            y=1.04,
+            y=1.03,
             xanchor="center",
             x=0.5,
             bgcolor="rgba(14, 17, 23, 0.8)",
@@ -408,50 +632,28 @@ def render_live_multi_track():
         ),
     )
 
-    # Strictly inverted Y-axis across all tracks (depth increases downwards)
-    fig.update_yaxes(
-        autorange="reversed",
-        title_text="Measured Depth (m MD)",
-        range=[max_d, min_d],
-        gridcolor="#30363D",
-        zerolinecolor="#30363D",
-        tickfont=dict(color="#8B949E", size=11),
-        row=1,
-        col=1,
-    )
-    fig.update_yaxes(autorange="reversed", gridcolor="#30363D", zerolinecolor="#30363D", row=1, col=2)
-    fig.update_yaxes(autorange="reversed", gridcolor="#30363D", zerolinecolor="#30363D", row=1, col=3)
+    # Inverted Y-axes across all tracks
+    for r, c in [(1, 1), (1, 3), (1, 5), (2, 1), (2, 4)]:
+        is_first_in_row = c == 1
+        fig.update_yaxes(
+            autorange="reversed",
+            range=[max_d, min_d],
+            gridcolor="#30363D",
+            zerolinecolor="#30363D",
+            tickfont=dict(color="#8B949E", size=11),
+            title_text="Measured Depth (m MD)" if is_first_in_row else "",
+            row=r,
+            col=c,
+        )
 
-    # Customize X-axes ranges and titles for each track
-    fig.update_xaxes(
-        title_text="ROP (m/hr)",
-        range=[0, 45],
-        gridcolor="#30363D",
-        zerolinecolor="#30363D",
-        tickfont=dict(color="#8B949E", size=10),
-        row=1,
-        col=1,
-    )
-    fig.update_xaxes(
-        title_text="WOB (klbs) / RPM(/5)",
-        range=[0, 50],
-        gridcolor="#30363D",
-        zerolinecolor="#30363D",
-        tickfont=dict(color="#8B949E", size=10),
-        row=1,
-        col=2,
-    )
-    fig.update_xaxes(
-        title_text="Gamma Ray (API)",
-        range=[15, 160],
-        gridcolor="#30363D",
-        zerolinecolor="#30363D",
-        tickfont=dict(color="#8B949E", size=10),
-        row=1,
-        col=3,
-    )
+    # X-axes ranges and titles
+    fig.update_xaxes(title_text="ROP (m/hr)", range=[0, 45], gridcolor="#30363D", zerolinecolor="#30363D", tickfont=dict(color="#8B949E", size=10), row=1, col=1)
+    fig.update_xaxes(title_text="WOB (klbs) / RPM(/5)", range=[0, 50], gridcolor="#30363D", zerolinecolor="#30363D", tickfont=dict(color="#8B949E", size=10), row=1, col=3)
+    fig.update_xaxes(title_text="Gamma Ray (API)", range=[15, 160], gridcolor="#30363D", zerolinecolor="#30363D", tickfont=dict(color="#8B949E", size=10), row=1, col=5)
+    fig.update_xaxes(title_text="Pressure (psi)", range=[3800, 4800], gridcolor="#30363D", zerolinecolor="#30363D", tickfont=dict(color="#8B949E", size=10), row=2, col=1)
+    fig.update_xaxes(title_text="TVD (m)", range=[3140, 3360], gridcolor="#30363D", zerolinecolor="#30363D", tickfont=dict(color="#8B949E", size=10), row=2, col=4)
 
     st.plotly_chart(fig, use_container_width=True)
 
-# Render the multi-track component
-render_live_multi_track()
+# Render live telemetry dashboard
+render_live_telemetry_dashboard()

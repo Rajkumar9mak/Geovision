@@ -75,19 +75,28 @@ div.stDialog button:focus {
 div[data-testid="stMetric"] {
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    padding: 16px 20px;
+    padding: 12px 14px;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    min-width: 0;
 }
 div[data-testid="stMetricLabel"] {
     color: var(--text-muted) !important;
-    font-size: 0.85rem !important;
+    font-size: 0.82rem !important;
     font-weight: 500 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 div[data-testid="stMetricValue"] {
     color: #FFFFFF !important;
-    font-size: 1.6rem !important;
+    font-size: 1.45rem !important;
     font-weight: 700 !important;
+    white-space: nowrap !important;
+}
+div[data-testid="stMetricDelta"] {
+    font-size: 0.78rem !important;
+    white-space: nowrap !important;
 }
 
 /* Status Badge */
